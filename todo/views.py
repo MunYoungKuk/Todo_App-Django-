@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .models import Todo
+from .models import Todo,Comment
 # Create your views here.
 def index(request):
     todos = Todo.objects.all()
@@ -32,7 +32,7 @@ def delete(request,id):
 def edit(request,id):
     todo = Todo.objects.get(pk=id)
     return render(request,"todo/edit.html",{"todo":todo})
-    pass
+
 
 def update(request,id):
     todo = Todo.objects.get(pk=id)
@@ -45,4 +45,12 @@ def update(request,id):
     todo.due_date = due_date
     todo.save()
     
-    return redirect("/todos/{{todo.id}}/")
+    return redirect(f"/todos/{id}/")
+    
+def comment_create(request,id):
+    todo = Todo.objects.get(pk=id)
+    content = request.POST.get("content")
+    
+    Comment.objects.create(todo=todo,content=content)
+    
+    return redirect(f"/todos/{id}/")
